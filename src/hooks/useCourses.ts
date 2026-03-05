@@ -1,42 +1,21 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import {
-    collection,
-    query,
-    where,
-    getDocs,
-    doc,
-    getDoc,
-    orderBy,
-    limit,
-    addDoc,
-    serverTimestamp
-} from "firebase/firestore";
+import { collection, query, getDocs, orderBy, addDoc, serverTimestamp, deleteDoc, doc, updateDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
-import { Course, Lesson } from "@/types";
+import { Course } from "@/types";
+import { toast } from "react-hot-toast";
 
 export const useCourses = () => {
-    const [loading, setLoading] = useState(false);
     const [courses, setCourses] = useState<Course[]>([]);
+    const [loading, setLoading] = useState(true);
 
-    const fetchCourses = async (category?: string) => {
-        setLoading(true);
+    const fetchCourses = async () => {
         try {
-            const coursesRef = collection(db, "courses");
-            let q = query(coursesRef, orderBy("createdAt", "desc"));
-
-            if (category && category !== "All") {
-                q = query(coursesRef, where("category", "==", category), orderBy("createdAt", "desc"));
-            }
-
-            const querySnapshot = await getDocs(q);
-            const fetchedCourses = querySnapshot.docs.map(doc => ({
-                id: doc.id,
-                ...doc.data()
-            })) as Course[];
-
-            setCourses(fetchedCourses);
+            const q = query(collection(db, "courses"), orderBy("createdAt", "desc"));
+            const snapshot = await getDocs(q);
+            const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as Course[];
+            setCourses(data);
         } catch (error) {
             console.error("Error fetching courses:", error);
         } finally {
@@ -44,40 +23,45 @@ export const useCourses = () => {
         }
     };
 
-    const getCourseById = async (id: string) => {
+    const addCourse = async (course: Omit<Course, "id" | "createdAt">) => {
         try {
-            const docRef = doc(db, "courses", id);
-            const docSnap = await getDoc(docRef);
-            if (docSnap.exists()) {
-                return { id: docSnap.id, ...docSnap.data() } as Course;
-            }
-            return null;
+            const docRef = await addDoc(collection(db, "courses"), {
+                ...course,
+                createdAt: serverTimestamp()
+            });
+            toast.success("Course created successfully");
+            refresh();
+            return docRef.id;
         } catch (error) {
-            console.error("Error getting course:", error);
-            return null;
+            toast.error("Failed to create course");
         }
     };
 
-    const getLessons = async (courseId: string) => {
+    const updateCourse = async (id: string, updates: Partial<Course>) => {
         try {
-            const lessonsRef = collection(db, "lessons");
-            const q = query(lessonsRef, where("courseId", "==", courseId), orderBy("order", "asc"));
-            const querySnapshot = await getDocs(q);
-            return querySnapshot.docs.map(doc => ({
-                id: doc.id,
-                ...doc.data()
-            })) as Lesson[];
+            await updateDoc(doc(db, "courses", id), updates);
+            toast.success("Course updated");
+            refresh();
         } catch (error) {
-            console.error("Error fetching lessons:", error);
-            return [];
+            toast.error("Update failed");
         }
     };
 
-    return {
-        loading,
-        courses,
-        fetchCourses,
-        getCourseById,
-        getLessons
+    const removeCourse = async (id: string) => {
+        try {
+            await deleteDoc(doc(db, "courses", id));
+            setCourses(courses.filter(c => c.id !== id));
+            toast.success("Course deleted");
+        } catch (error) {
+            toast.error("Deletion failed");
+        }
     };
+
+    const refresh = () => fetchCourses();
+
+    useEffect(() => {
+        fetchCourses();
+    }, []);
+
+    return { courses, loading, addCourse, updateCourse, removeCourse, refresh };
 };
