@@ -34,12 +34,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                     setUser(userDoc.data() as User);
                 } else {
                     // Create new user document
+                    const isAdminEmail = firebaseUser.email === "mmahmutaliyev411@gmail.com";
+
                     const newUser: User = {
                         id: firebaseUser.uid,
                         name: firebaseUser.displayName || "Unknown User",
                         email: firebaseUser.email || "",
                         avatar: firebaseUser.photoURL || "",
-                        role: "student", // Default role
+                        role: isAdminEmail ? "admin" : "student",
                         createdAt: serverTimestamp(),
                     };
                     await setDoc(doc(db, "users", firebaseUser.uid), newUser);
