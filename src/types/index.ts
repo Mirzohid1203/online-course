@@ -1,4 +1,4 @@
-export type UserRole = "student" | "instructor" | "admin";
+export type UserRole = "admin" | "instructor" | "student";
 
 export interface User {
     id: string;
@@ -6,65 +6,55 @@ export interface User {
     email: string;
     avatar: string;
     role: UserRole;
-    createdAt: any; // Firestore Timestamp
+    createdAt: any;
+}
+
+export interface Student {
+    id: string;
+    name: string;
+    email: string;
+    phone: string;
+    enrolledCourses: string[]; // List of course IDs
+    progress: Record<string, number>; // courseId -> percentage
+    createdAt: any;
 }
 
 export interface Course {
     id: string;
     title: string;
     description: string;
-    thumbnail: string;
     instructorId: string;
-    instructorName?: string;
-    category: string;
     price: number;
-    rating: number;
+    category: string;
+    schedule: string; // e.g., "Mon, Wed, Fri 18:00"
     createdAt: any;
-}
-
-export interface Lesson {
-    id: string;
-    courseId: string;
-    title: string;
-    description: string;
-    videoUrl: string;
-    order: number;
 }
 
 export interface Enrollment {
     id: string;
-    userId: string;
+    studentId: string;
     courseId: string;
-    progress: string[]; // IDs of completed lessons
     enrolledAt: any;
-}
-
-export interface Review {
-    id: string;
-    userId: string;
-    courseId: string;
-    rating: number;
-    comment: string;
-    userName?: string;
-    userAvatar?: string;
+    progress: number;
+    paymentStatus: "paid" | "partial" | "pending";
+    amountPaid: number;
 }
 
 export interface Message {
     id: string;
-    courseId: string;
+    courseId?: string; // For group chats
     senderId: string;
     senderName: string;
     senderAvatar: string;
     message: string;
     timestamp: any;
+    receiverId?: string; // For direct messages
 }
 
-export interface Certificate {
-    id: string;
-    userId: string;
-    courseId: string;
-    courseTitle: string;
-    userName: string;
-    issueDate: any;
-    certificateUrl: string;
+export interface AnalyticsData {
+    totalRevenue: number;
+    totalStudents: number;
+    totalInstructors: number;
+    revenueByMonth: { month: string; amount: number }[];
+    attendanceByCourse: { courseTitle: string; count: number }[];
 }
