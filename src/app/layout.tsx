@@ -15,8 +15,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "EduStream | Modern Online Learning Platform",
-  description: "Learn from the best instructors around the world with EduStream.",
+  title: "CRM PRO | Enterprise Learning Management",
+  description: "Professional CRM for modern education centers.",
 };
 
 export default function RootLayout({

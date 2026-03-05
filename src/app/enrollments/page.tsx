@@ -4,7 +4,7 @@ import DashboardLayout from "@/components/layout/DashboardLayout";
 import { useEnrollments } from "@/hooks/useEnrollments";
 import { useStudents } from "@/hooks/useStudents";
 import { useCourses } from "@/hooks/useCourses";
-import { Button } from "@/components/ui/Button";
+import { Button, cn } from "@/components/ui/Button";
 import {
     CreditCard,
     Search,
