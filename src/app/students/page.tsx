@@ -14,7 +14,8 @@ import {
     Trash2,
     Edit2,
     ExternalLink,
-    Users
+    Users,
+    Lock
 } from "lucide-react";
 import { useState } from "react";
 
@@ -159,6 +160,16 @@ export default function StudentsPage() {
                                         value={newStudent.phone}
                                         onChange={(e) => setNewStudent({ ...newStudent, phone: e.target.value })}
                                         className="w-full px-4 py-3 bg-gray-50 border-none rounded-2xl italic outline-none focus:ring-2 focus:ring-blue-600"
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <label className="text-xs font-black text-gray-400 uppercase tracking-widest italic">Access Code (Password)</label>
+                                    <input
+                                        required
+                                        value={newStudent.accessCode}
+                                        onChange={(e) => setNewStudent({ ...newStudent, accessCode: e.target.value })}
+                                        className="w-full px-4 py-3 bg-gray-50 border-none rounded-2xl italic outline-none focus:ring-2 focus:ring-blue-600"
+                                        placeholder="e.g. ST12345"
                                     />
                                 </div>
                             </div>

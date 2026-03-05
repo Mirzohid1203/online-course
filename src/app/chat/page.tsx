@@ -2,7 +2,8 @@
 
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import { useAuth } from "@/hooks/useAuth";
-import { useChat } from "@/hooks/useChat"; // Reusing the logic from previous
+import { useChat } from "@/hooks/useChat";
+import { useStudents } from "@/hooks/useStudents";
 import { Button, cn } from "@/components/ui/Button";
 import {
     Send,
@@ -19,6 +20,7 @@ import { useState, useRef, useEffect } from "react";
 
 export default function CRMChatPage() {
     const { user } = useAuth();
+    const { students } = useStudents();
     const [activeChannel, setActiveChannel] = useState("Staff General");
     const { messages, sendMessage, loading } = useChat(activeChannel);
     const [inputText, setInputText] = useState("");
@@ -35,11 +37,12 @@ export default function CRMChatPage() {
         { name: "Admin Announcements", type: "channel" },
     ];
 
-    const contacts = [
-        { name: "Sarah Johnson", status: "online", role: "Instructor" },
-        { name: "Michael Chen", status: "offline", role: "Student" },
-        { name: "Alex Admin", status: "online", role: "Admin" },
-    ];
+    const contacts = students.map(s => ({
+        name: s.name,
+        status: "offline", // Mock status for now
+        role: "Student",
+        avatar: `https://ui-avatars.com/api/?name=${s.name}&background=random`
+    }));
 
     const handleSend = (e: React.FormEvent) => {
         e.preventDefault();
@@ -92,7 +95,7 @@ export default function CRMChatPage() {
                                         className="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-bold italic text-gray-500 hover:bg-gray-100 transition-all group"
                                     >
                                         <div className="relative">
-                                            <img src={`https://ui-avatars.com/api/?name=${contact.name}`} className="w-6 h-6 rounded-full" />
+                                            <img src={contact.avatar} className="w-6 h-6 rounded-full" />
                                             <Circle size={8} className={cn("absolute -bottom-0.5 -right-0.5 fill-current", contact.status === 'online' ? "text-green-500" : "text-gray-300")} />
                                         </div>
                                         <span className="flex-1 text-left truncate">{contact.name}</span>
