@@ -31,7 +31,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 const userDoc = await getDoc(doc(db, "users", firebaseUser.uid));
 
                 if (userDoc.exists()) {
-                    setUser(userDoc.data() as User);
+                    const userData = userDoc.data() as User;
+                    // Force admin role for the specific email if it's not already set
+                    if (userData.email === "mmahmutaliyev411@gmail.com" && userData.role !== "admin") {
+                        await setDoc(doc(db, "users", firebaseUser.uid), { ...userData, role: "admin" }, { merge: true });
+                        userData.role = "admin";
+                    }
+                    setUser(userData);
                 } else {
                     // Create new user document
                     const isAdminEmail = firebaseUser.email === "mmahmutaliyev411@gmail.com";
