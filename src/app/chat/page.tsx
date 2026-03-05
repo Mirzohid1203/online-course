@@ -38,8 +38,9 @@ export default function CRMChatPage() {
     ];
 
     const contacts = students.map(s => ({
+        id: s.id,
         name: s.name,
-        status: "offline", // Mock status for now
+        status: "offline",
         role: "Student",
         avatar: `https://ui-avatars.com/api/?name=${s.name}&background=random`
     }));
@@ -91,7 +92,7 @@ export default function CRMChatPage() {
                             <div className="space-y-1">
                                 {contacts.map((contact) => (
                                     <button
-                                        key={contact.name}
+                                        key={contact.id}
                                         className="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-bold italic text-gray-500 hover:bg-gray-100 transition-all group"
                                     >
                                         <div className="relative">
