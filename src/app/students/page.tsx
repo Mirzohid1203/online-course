@@ -22,7 +22,7 @@ export default function StudentsPage() {
     const { students, loading, addStudent, removeStudent } = useStudents();
     const [searchTerm, setSearchTerm] = useState("");
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [newStudent, setNewStudent] = useState({ name: "", email: "", phone: "" });
+    const [newStudent, setNewStudent] = useState({ name: "", email: "", phone: "", accessCode: "" });
 
     const filteredStudents = students.filter(s =>
         s.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -32,7 +32,7 @@ export default function StudentsPage() {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         await addStudent(newStudent);
-        setNewStudent({ name: "", email: "", phone: "" });
+        setNewStudent({ name: "", email: "", phone: "", accessCode: "" });
         setIsModalOpen(false);
     };
 
@@ -92,6 +92,11 @@ export default function StudentsPage() {
                                     <div className="flex items-center gap-3 text-sm text-gray-500 italic">
                                         <Phone size={16} className="text-blue-500" /> {student.phone}
                                     </div>
+                                    {student.accessCode && (
+                                        <div className="flex items-center gap-3 text-sm font-black text-blue-600 italic bg-blue-50 px-3 py-1.5 rounded-xl border border-blue-100">
+                                            <Lock size={14} /> Code: {student.accessCode}
+                                        </div>
+                                    )}
                                 </div>
 
                                 <div className="pt-6 border-t border-gray-50 flex items-center justify-between">

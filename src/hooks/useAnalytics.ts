@@ -7,24 +7,19 @@ import { db } from "@/lib/firebase";
 export const useAnalytics = () => {
     const [data, setData] = useState<any>({
         revenue: [
-            { month: 'Jan', amount: 4500 },
-            { month: 'Feb', amount: 5200 },
-            { month: 'Mar', amount: 4800 },
-            { month: 'Apr', amount: 6100 },
-            { month: 'May', amount: 5900 },
-            { month: 'Jun', amount: 7200 },
+            { month: 'Jan', amount: 0 },
+            { month: 'Feb', amount: 0 },
+            { month: 'Mar', amount: 0 },
+            { month: 'Apr', amount: 0 },
+            { month: 'May', amount: 0 },
+            { month: 'Jun', amount: 0 },
         ],
-        attendance: [
-            { course: 'React Master', count: 45 },
-            { course: 'UI Design', count: 32 },
-            { course: 'Python Dev', count: 58 },
-            { course: 'Node.js', count: 28 },
-        ],
+        attendance: [],
         stats: {
-            totalRevenue: 34500,
-            totalStudents: 156,
-            totalInstructors: 12,
-            pendingPayments: 8
+            totalRevenue: 0,
+            totalStudents: 0,
+            totalInstructors: 0,
+            pendingPayments: 0
         }
     });
     const [loading, setLoading] = useState(true);

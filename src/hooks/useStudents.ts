@@ -23,7 +23,7 @@ export const useStudents = () => {
         }
     };
 
-    const addStudent = async (student: Omit<Student, "id" | "createdAt" | "enrolledCourses" | "progress">) => {
+    const addStudent = async (student: Omit<Student, "id" | "createdAt" | "enrolledCourses" | "progress"> & { accessCode?: string }) => {
         try {
             const docRef = await addDoc(collection(db, "students"), {
                 ...student,

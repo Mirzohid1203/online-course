@@ -14,6 +14,7 @@ export interface Student {
     name: string;
     email: string;
     phone: string;
+    accessCode?: string; // For student login
     enrolledCourses: string[]; // List of course IDs
     progress: Record<string, number>; // courseId -> percentage
     createdAt: any;

@@ -7,7 +7,7 @@ import {
     signOut,
     User as FirebaseUser
 } from "firebase/auth";
-import { doc, getDoc, setDoc, serverTimestamp } from "firebase/firestore";
+import { doc, getDoc, setDoc, serverTimestamp, collection, query, where, getDocs } from "firebase/firestore";
 import { auth, db, provider } from "@/lib/firebase";
 import { User, UserRole } from "@/types";
 
@@ -15,6 +15,7 @@ interface AuthContextType {
     user: User | null;
     loading: boolean;
     signIn: () => Promise<void>;
+    loginWithCode: (email: string, code: string) => Promise<void>;
     logout: () => Promise<void>;
 }
 
@@ -70,6 +71,27 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
     };
 
+    const loginWithCode = async (email: string, code: string) => {
+        try {
+            // Check for student in special 'registration_codes' collection or 'students' table
+            const q = query(collection(db, "students"), where("email", "==", email), where("accessCode", "==", code));
+            const snap = await getDocs(q);
+
+            if (!snap.empty) {
+                const studentData = snap.docs[0].data();
+                // This is a simplified mock for the login-via-code requirement
+                // In a production app, we would use Firebase Auth Custom Tokens or email/pass
+                alert("Login successful! Welcome student.");
+                // For now, redirect or update state manually as needed
+            } else {
+                throw new Error("Invalid credentials");
+            }
+        } catch (error) {
+            console.error("Login with code error:", error);
+            throw error;
+        }
+    };
+
     const logout = async () => {
         try {
             await signOut(auth);
@@ -79,7 +101,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
 
     return (
-        <AuthContext.Provider value={{ user, loading, signIn, logout }}>
+        <AuthContext.Provider value={{ user, loading, signIn, logout, loginWithCode }}>
             {children}
         </AuthContext.Provider>
     );
