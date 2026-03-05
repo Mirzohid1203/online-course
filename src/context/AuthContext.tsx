@@ -73,16 +73,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     const loginWithCode = async (email: string, code: string) => {
         try {
-            // Check for student in special 'registration_codes' collection or 'students' table
             const q = query(collection(db, "students"), where("email", "==", email), where("accessCode", "==", code));
             const snap = await getDocs(q);
 
             if (!snap.empty) {
                 const studentData = snap.docs[0].data();
-                // This is a simplified mock for the login-via-code requirement
-                // In a production app, we would use Firebase Auth Custom Tokens or email/pass
-                alert("Login successful! Welcome student.");
-                // For now, redirect or update state manually as needed
+                const studentUser: User = {
+                    id: snap.docs[0].id,
+                    name: studentData.name,
+                    email: studentData.email,
+                    avatar: `https://ui-avatars.com/api/?name=${studentData.name}&background=random`,
+                    role: "student",
+                    createdAt: studentData.createdAt
+                };
+                setUser(studentUser);
+                toast.success("Welcome back! Initializing student console.");
+                router.push("/dashboard"); // Added routing to dashboard
             } else {
                 throw new Error("Invalid credentials");
             }

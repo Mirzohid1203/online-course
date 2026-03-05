@@ -25,7 +25,6 @@ export default function CRMLanding() {
     setLoginLoading(true);
     try {
       await loginWithCode(studentCreds.email, studentCreds.code);
-      // loginWithCode now handles the logic
     } catch (err) {
       toast.error("Invalid email or access code");
     } finally {
@@ -90,44 +89,90 @@ export default function CRMLanding() {
             </Button>
           </div>
         )}
-      </div>
-      <div className="flex-1 grid grid-cols-2 gap-8">
-        <div className="col-span-2 h-40 rounded-[32px] bg-white/[0.04]" />
-        <div className="h-full rounded-[32px] bg-white/[0.02]" />
-        <div className="h-full rounded-[32px] bg-white/[0.02]" />
-      </div>
-    </div>
-          </div >
-        </div >
-      </section >
+      </section>
 
-    {/* Feature Grid */ }
-    < section id = "features" className = "max-w-7xl mx-auto px-8 py-32 border-t border-white/5" >
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-        {[
-          { icon: <Database size={32} />, title: "Data Integrity", desc: "Enterprise Firestore integration ensuring your student records are immutable and scalable." },
-          { icon: <BarChart3 size={32} />, title: "Intelligence", desc: "Deep analytics and financial reporting using advanced Recharts visualization." },
-          { icon: <CreditCard size={32} />, title: "Audit Trail", desc: "Full payment history tracking with partial payment support and real-time statuses." },
-        ].map((feature, i) => (
-          <div key={i} className="group p-8 rounded-[40px] bg-white/[0.02] border border-white/5 hover:bg-white/[0.04] transition-all">
-            <div className="text-blue-500 mb-8 p-4 bg-blue-500/10 w-fit rounded-2xl group-hover:scale-110 transition-transform">{feature.icon}</div>
-            <h3 className="text-2xl font-black italic mb-4">{feature.title}</h3>
-            <p className="text-gray-400 italic text-sm leading-relaxed">{feature.desc}</p>
+      {/* Student Login Modal */}
+      {isStudentModalOpen && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-xl">
+          <div className="bg-[#121214] border border-white/10 rounded-[40px] w-full max-w-md p-10 shadow-2xl animate-fade-in relative overflow-hidden">
+            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-600 to-indigo-600" />
+            <button
+              onClick={() => setIsStudentModalOpen(false)}
+              className="absolute top-6 right-8 text-gray-500 hover:text-white text-2xl"
+            >
+              &times;
+            </button>
+
+            <div className="text-center mb-10">
+              <div className="w-16 h-16 bg-blue-600/10 rounded-2xl flex items-center justify-center mx-auto mb-6 text-blue-500">
+                <Shield size={32} />
+              </div>
+              <h2 className="text-3xl font-black italic text-white tracking-tight">Student Login</h2>
+              <p className="text-gray-500 italic text-sm mt-2">Enter credentials provided by your center.</p>
+            </div>
+
+            <form onSubmit={handleStudentLogin} className="space-y-6">
+              <div className="space-y-2">
+                <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest italic ml-1">Official Email</label>
+                <input
+                  required
+                  type="email"
+                  value={studentCreds.email}
+                  onChange={(e) => setStudentCreds({ ...studentCreds, email: e.target.value })}
+                  className="w-full px-6 py-4 bg-white/5 border border-white/10 rounded-2xl text-white italic outline-none focus:ring-2 focus:ring-blue-600 transition-all font-medium"
+                  placeholder="name@university.com"
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest italic ml-1">Access Code</label>
+                <input
+                  required
+                  type="password"
+                  value={studentCreds.code}
+                  onChange={(e) => setStudentCreds({ ...studentCreds, code: e.target.value })}
+                  className="w-full px-6 py-4 bg-white/5 border border-white/10 rounded-2xl text-white italic outline-none focus:ring-2 focus:ring-blue-600 transition-all font-medium tracking-wide"
+                  placeholder="••••••••"
+                />
+              </div>
+              <Button
+                type="submit"
+                disabled={loginLoading}
+                className="w-full py-8 rounded-2xl text-lg font-black italic bg-white text-gray-900 hover:bg-gray-200 transition-all shadow-xl shadow-white/5 mt-4"
+              >
+                {loginLoading ? "Verifying..." : "Initialize Portal Session"}
+              </Button>
+            </form>
           </div>
-        ))}
-      </div>
-      </section >
+        </div>
+      )}
 
-    <footer className="max-w-7xl mx-auto px-8 py-12 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-8 text-[10px] font-black uppercase tracking-[0.2em] italic text-gray-500">
-      <div className="flex items-center gap-2 text-white">
-        <Shield size={16} /> <span>CRM PRO 2026. ALL RIGHTS RESERVED.</span>
-      </div>
-      <div className="flex gap-12">
-        <a href="#" className="hover:text-white transition-colors">Privacy Infrastructure</a>
-        <a href="#" className="hover:text-white transition-colors">Terms of Service</a>
-        <a href="#" className="hover:text-white transition-colors">Legal Compliance</a>
-      </div>
-    </footer>
-    </main >
+      {/* Feature Grid */}
+      <section id="features" className="max-w-7xl mx-auto px-8 py-32 border-t border-white/5">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+          {[
+            { icon: <Database size={32} />, title: "Data Integrity", desc: "Enterprise Firestore integration ensuring your student records are immutable and scalable." },
+            { icon: <BarChart3 size={32} />, title: "Intelligence", desc: "Deep analytics and financial reporting using advanced Recharts visualization." },
+            { icon: <CreditCard size={32} />, title: "Audit Trail", desc: "Full payment history tracking with partial payment support and real-time statuses." },
+          ].map((feature, i) => (
+            <div key={i} className="group p-8 rounded-[40px] bg-white/[0.02] border border-white/5 hover:bg-white/[0.04] transition-all">
+              <div className="text-blue-500 mb-8 p-4 bg-blue-500/10 w-fit rounded-2xl group-hover:scale-110 transition-transform">{feature.icon}</div>
+              <h3 className="text-2xl font-black italic mb-4">{feature.title}</h3>
+              <p className="text-gray-400 italic text-sm leading-relaxed">{feature.desc}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <footer className="max-w-7xl mx-auto px-8 py-12 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-8 text-[10px] font-black uppercase tracking-[0.2em] italic text-gray-500">
+        <div className="flex items-center gap-2 text-white">
+          <Shield size={16} /> <span>CRM PRO 2026. ALL RIGHTS RESERVED.</span>
+        </div>
+        <div className="flex gap-12">
+          <a href="#" className="hover:text-white transition-colors">Privacy Infrastructure</a>
+          <a href="#" className="hover:text-white transition-colors">Terms of Service</a>
+          <a href="#" className="hover:text-white transition-colors">Legal Compliance</a>
+        </div>
+      </footer>
+    </main>
   );
 }
