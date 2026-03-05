@@ -76,13 +76,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     const loginWithCode = async (email: string, code: string) => {
         try {
-            const q = query(collection(db, "students"), where("email", "==", email), where("accessCode", "==", code));
-            const snap = await getDocs(q);
+            // 1. Try to find student
+            const qS = query(collection(db, "students"), where("email", "==", email), where("accessCode", "==", code));
+            const snapS = await getDocs(qS);
 
-            if (!snap.empty) {
-                const studentData = snap.docs[0].data();
+            if (!snapS.empty) {
+                const studentData = snapS.docs[0].data();
                 const studentUser: User = {
-                    id: snap.docs[0].id,
+                    id: snapS.docs[0].id,
                     name: studentData.name,
                     email: studentData.email,
                     avatar: `https://ui-avatars.com/api/?name=${studentData.name}&background=random`,
@@ -91,10 +92,31 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 };
                 setUser(studentUser);
                 toast.success("Welcome back! Initializing student console.");
-                router.push("/dashboard"); // Added routing to dashboard
-            } else {
-                throw new Error("Invalid credentials");
+                router.push("/dashboard");
+                return;
             }
+
+            // 2. Try to find instructor
+            const qI = query(collection(db, "instructors"), where("email", "==", email), where("accessCode", "==", code));
+            const snapI = await getDocs(qI);
+
+            if (!snapI.empty) {
+                const instructorData = snapI.docs[0].data();
+                const instructorUser: User = {
+                    id: snapI.docs[0].id,
+                    name: instructorData.name,
+                    email: instructorData.email,
+                    avatar: `https://ui-avatars.com/api/?name=${instructorData.name}&background=random`,
+                    role: "instructor",
+                    createdAt: instructorData.createdAt
+                };
+                setUser(instructorUser);
+                toast.success("Welcome, Instructor! Loading classroom hub.");
+                router.push("/dashboard");
+                return;
+            }
+
+            throw new Error("Invalid credentials");
         } catch (error) {
             console.error("Login with code error:", error);
             throw error;

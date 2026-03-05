@@ -31,6 +31,16 @@ export interface Course {
     createdAt: any;
 }
 
+export interface Instructor {
+    id: string;
+    name: string;
+    email: string;
+    phone: string;
+    specialization: string;
+    accessCode?: string; // For instructor login
+    createdAt: any;
+}
+
 export interface Enrollment {
     id: string;
     studentId: string;
